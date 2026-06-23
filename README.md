@@ -55,8 +55,8 @@ Inventory rules:
 
 | Target | Packages / actions |
 |--------|-------------------|
-| Groups `dev` and `test` | `mariadb`, `php` |
-| Group `dev` only | RPM Development Tools group |
+| Groups `dev` and `test` | `mariadb105`, `php` |
+| Group `dev` only | `@Development Tools` group |
 | Group `dev` only | Update all packages |
 
 **Verification:** show successful playbook execution and installed packages.
@@ -71,9 +71,12 @@ Inventory rules:
 
 **Role requirements:**
 
-- Configure Apache web server
-- Template output: `Welcome to <full hostname of machine> on <IP address>`
-- Run **only** on hosts in group `test`
+- Configure Apache web server on group `test`
+- Template renders: `Welcome to <full hostname> on <IP address>`
+
+```jinja2
+Welcome to {{ ansible_fqdn | default(ansible_hostname) }} on {{ ansible_default_ipv4.address }}
+```
 
 **Verification:** access the web page via browser or `curl`.
 
@@ -147,15 +150,11 @@ Mission 2 reuses this repository in a **new AWS Hyderabad region** environment:
 ├── issue.yml                # Task 5 — /etc/issue banners
 ├── custom.yml               # Task 6 — Apache on dev
 ├── myrole.yml               # Task 4 — applies myrole to test group
-└── myrole/                  # Task 4 — Apache + web page role
+└── roles/myrole/            # Task 4 — Apache + templated web page
+    ├── templates/index.j2
     ├── tasks/main.yml
-    ├── defaults/main.yml
-    ├── handlers/main.yml
-    ├── meta/main.yml
-    └── tests/
+    └── meta/main.yml
 ```
-
-> On the control node, the role lives under `/home/devops/ansible/`. In this repo it is committed as `myrole/` at the project root (equivalent to `roles/myrole` when placed in the standard roles path).
 
 ## Tech Stack
 
@@ -163,7 +162,7 @@ Mission 2 reuses this repository in a **new AWS Hyderabad region** environment:
 - **OS:** Amazon Linux 2023 (`dnf`)
 - **Automation:** ansible-navigator (execution environment inside Docker)
 - **Web server:** Apache (`httpd`)
-- **Packages:** MariaDB, PHP, Development Tools (dev only)
+- **Packages:** MariaDB 10.5 (`mariadb105`), PHP, Development Tools (dev only)
 
 ## Prerequisites
 
@@ -256,10 +255,10 @@ curl http://<dev-server-ip>/
 
 | Playbook | Task | Target | Purpose |
 |----------|------|--------|---------|
-| `packages.yml` | 3 | `dev`, `test` | MariaDB, PHP; dev package updates and Development Tools |
-| `issue.yml` | 5 | `dev`, `test` | Set `/etc/issue` banners |
-| `custom.yml` | 6 | `dev` | Apache web server with custom document root |
-| `myrole.yml` | 4 | `test` | Apache web server via `myrole` and Jinja2 template |
+| `packages.yml` | 3 | `dev`, `test` | Installs `mariadb105` and PHP; updates packages and installs Development Tools on `dev` |
+| `issue.yml` | 5 | `dev`, `test` | Sets `/etc/issue` to `development` (dev) or `test` (test) |
+| `custom.yml` | 6 | `dev` | Apache with `/webdev` document root, `development` page content, and `/webdev` symlink |
+| `myrole.yml` | 4 | `test` | Apache web server via `myrole` using `index.j2` template |
 
 ## Notes
 
