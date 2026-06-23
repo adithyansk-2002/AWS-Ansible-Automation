@@ -145,7 +145,7 @@ Push to this repository:
 
 ## Infrastructure Recreation Using Git
 
-we now recreate the infrastructure in a **new AWS Hyderabad region** environment:
+We now recreate the infrastructure in a **new AWS Hyderabad region** environment:
 
 | Instance | Name |
 |----------|------|
@@ -180,7 +180,7 @@ we now recreate the infrastructure in a **new AWS Hyderabad region** environment
 
 ## Tech Stack
 
-- **Cloud:** AWS EC2 (Mumbai — Mission 1; Hyderabad — Mission 2)
+- **Cloud:** AWS EC2 (Mumbai; Hyderabad)
 - **OS:** Amazon Linux 2023 (`dnf`)
 - **Automation:** ansible-navigator (execution environment inside Docker)
 - **Web server:** Apache (`httpd`)
@@ -189,9 +189,9 @@ we now recreate the infrastructure in a **new AWS Hyderabad region** environment
 ## Prerequisites
 
 1. Three EC2 instances in the target region (Amazon Linux 2023)
-2. Mission user created on all nodes (`devops` for Mission 1, `clone` for Mission 2) with SSH key access from the control node
+2. User created on all nodes (`devops` or `clone`) with SSH key access from the control node
 3. **Docker** and **ansible-navigator** on the control node
-4. Project deployed under `/home/devops/ansible/` (Mission 1) or `/home/clone/ansible/` (Mission 2)
+4. Project deployed under `/home/devops/ansible/` or `/home/clone/ansible/`
 5. Python 3 on managed nodes (`/usr/bin/python3`)
 
 ## Configuration
@@ -276,7 +276,7 @@ curl http://<dev-server-ip>/
 ## Playbook Reference
 
 | Playbook | Target | Purpose |
-|----------|------|--------|---------|
+|----------|--------|---------|
 | `packages.yml` | `dev`, `test` | Installs `mariadb105` and PHP; updates packages and installs Development Tools on `dev` |
 | `issue.yml` | `dev`, `test` | Sets `/etc/issue` to `development` (dev) or `test` (test) |
 | `custom.yml` | `dev` | Apache with `/webdev` document root, `development` page content, and `/webdev` symlink |
