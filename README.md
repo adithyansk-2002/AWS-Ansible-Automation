@@ -44,8 +44,6 @@ Three EC2 instances in **AWS Mumbai (`ap-south-1`)**:
 - Project directory on control node: `/home/devops/ansible`
 - All playbooks executed via **Docker** and **ansible-navigator** only
 
-> **Important:** `ansible-playbook <playbook_name>` is **not permitted** for this mission. Use container-based execution only.
-
 ```mermaid
 flowchart LR
   subgraph control [Control Node — mumbai-control]
