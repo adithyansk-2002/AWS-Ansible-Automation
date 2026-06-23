@@ -2,6 +2,30 @@
 
 This repository provisions and configures three EC2 instances in AWS Mumbai (`ap-south-1`): one control node and two managed nodes grouped as `dev` and `test`.
 
+## Table of Contents
+
+- [Overview](#overview)
+  - [Infrastructure](#infrastructure)
+  - [Ansible configuration](#ansible-configuration)
+  - [Package management](#package-management)
+  - [Role and template](#role-and-template)
+  - [Login banner](#login-banner)
+  - [Custom web server](#custom-web-server)
+  - [Git integration](#git-integration)
+- [Infrastructure Recreation Using Git](#infrastructure-recreation-using-git)
+- [Repository Contents](#repository-contents)
+- [Tech Stack](#tech-stack)
+- [Prerequisites](#prerequisites)
+- [Configuration](#configuration)
+  - [Inventory](#inventory)
+  - [Ansible config](#ansible-config)
+- [Running Playbooks](#running-playbooks)
+  - [Execution environment](#execution-environment)
+  - [Commands](#commands)
+  - [Verification examples](#verification-examples)
+- [Playbook Reference](#playbook-reference)
+- [Notes](#notes)
+
 ## Overview
 
 ### Infrastructure
@@ -121,9 +145,9 @@ Push to this repository:
 
 ---
 
-## Mission 2 — Infrastructure Recreation Using Git
+## Infrastructure Recreation Using Git
 
-Mission 2 reuses this repository in a **new AWS Hyderabad region** environment:
+we now recreate the infrastructure in a **new AWS Hyderabad region** environment:
 
 | Instance | Name |
 |----------|------|
