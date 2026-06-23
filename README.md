@@ -1,6 +1,6 @@
 # AWS Ansible Automation
 
-Ansible-based infrastructure automation for **ITFS Task 1, Mission 1**. This repository provisions and configures three EC2 instances in AWS Mumbai (`ap-south-1`): one control node and two managed nodes grouped as `dev` and `test`.
+This repository provisions and configures three EC2 instances in AWS Mumbai (`ap-south-1`): one control node and two managed nodes grouped as `dev` and `test`.
 
 ## Overview
 
@@ -35,7 +35,7 @@ flowchart LR
   A -->|SSH / Ansible EE| C
 ```
 
-### Ansible configuration (Task 2)
+### Ansible configuration
 
 | Deliverable | Path on control node |
 |-------------|----------------------|
@@ -49,7 +49,7 @@ Inventory rules:
 
 **Verification:** demonstrate connectivity with Ansible (via ansible-navigator).
 
-### Package management (Task 3)
+### Package management
 
 **File:** `packages.yml`
 
@@ -61,7 +61,7 @@ Inventory rules:
 
 **Verification:** show successful playbook execution and installed packages.
 
-### Role and template (Task 4)
+### Role and template
 
 | Deliverable | Path |
 |-------------|------|
@@ -80,7 +80,7 @@ Welcome to {{ ansible_fqdn | default(ansible_hostname) }} on {{ ansible_default_
 
 **Verification:** access the web page via browser or `curl`.
 
-### Login banner (Task 5)
+### Login banner
 
 **File:** `issue.yml`
 
@@ -93,7 +93,7 @@ Replace `/etc/issue` content:
 
 **Verification:** display `/etc/issue` on each host.
 
-### Custom web server (Task 6)
+### Custom web server 
 
 **File:** `custom.yml`
 
@@ -107,7 +107,7 @@ Configure Apache on group `dev`:
 
 **Verification:** open the web page and confirm content.
 
-### Git integration (Task 7)
+### Git integration
 
 Push to this repository:
 
@@ -146,11 +146,11 @@ Mission 2 reuses this repository in a **new AWS Hyderabad region** environment:
 ├── ansible.cfg              # Ansible defaults (inventory path, remote user)
 ├── ansible-navigator.yml    # Execution environment for ansible-navigator
 ├── inventory                # dev / test host groups
-├── packages.yml             # Task 3 — package installation
-├── issue.yml                # Task 5 — /etc/issue banners
-├── custom.yml               # Task 6 — Apache on dev
-├── myrole.yml               # Task 4 — applies myrole to test group
-└── roles/myrole/            # Task 4 — Apache + templated web page
+├── packages.yml             # package installation
+├── issue.yml                # /etc/issue banners
+├── custom.yml               # Apache on dev
+├── myrole.yml               # applies myrole to test group
+└── roles/myrole/            # Apache + templated web page
     ├── templates/index.j2
     ├── tasks/main.yml
     └── meta/main.yml
@@ -253,12 +253,12 @@ curl http://<dev-server-ip>/
 
 ## Playbook Reference
 
-| Playbook | Task | Target | Purpose |
+| Playbook | Target | Purpose |
 |----------|------|--------|---------|
-| `packages.yml` | 3 | `dev`, `test` | Installs `mariadb105` and PHP; updates packages and installs Development Tools on `dev` |
-| `issue.yml` | 5 | `dev`, `test` | Sets `/etc/issue` to `development` (dev) or `test` (test) |
-| `custom.yml` | 6 | `dev` | Apache with `/webdev` document root, `development` page content, and `/webdev` symlink |
-| `myrole.yml` | 4 | `test` | Apache web server via `myrole` using `index.j2` template |
+| `packages.yml` | `dev`, `test` | Installs `mariadb105` and PHP; updates packages and installs Development Tools on `dev` |
+| `issue.yml` | `dev`, `test` | Sets `/etc/issue` to `development` (dev) or `test` (test) |
+| `custom.yml` | `dev` | Apache with `/webdev` document root, `development` page content, and `/webdev` symlink |
+| `myrole.yml` | `test` | Apache web server via `myrole` using `index.j2` template |
 
 ## Notes
 
