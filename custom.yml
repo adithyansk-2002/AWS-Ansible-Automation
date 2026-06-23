@@ -8,19 +8,31 @@
         name: httpd
         state: present
 
+    - name: Create web page with development content
+      copy:
+        dest: /var/www/html/index.html
+        content: "development\n"
+
+    - name: Create symbolic link /webdev to /var/www/html
+      file:
+        src: /var/www/html
+        dest: /webdev
+        state: link
+
+    - name: Set Apache DocumentRoot to /webdev
+      lineinfile:
+        path: /etc/httpd/conf/httpd.conf
+        regexp: '^DocumentRoot '
+        line: 'DocumentRoot "/webdev"'
+
+    - name: Update Apache Directory block for /webdev
+      replace:
+        path: /etc/httpd/conf/httpd.conf
+        regexp: '<Directory "/var/www/html">'
+        replace: '<Directory "/webdev">'
+
     - name: Start and enable Apache
       service:
         name: httpd
-        state: started
+        state: restarted
         enabled: true
-
-    - name: Create custom dev homepage
-      copy:
-        dest: /var/www/html/index.html
-        content: |
-          <html>
-          <head><title>Dev Server</title></head>
-          <body>
-          <h1>Welcome my custom dev server</h1>
-          </body>
-          </html>
