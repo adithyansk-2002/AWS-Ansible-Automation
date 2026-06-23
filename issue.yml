@@ -1,0 +1,18 @@
+---
+- name: Configure /etc/issue for dev group
+  hosts: dev
+  become: true
+  tasks:
+    - name: Set /etc/issue for dev
+      copy:
+        dest: /etc/issue
+        content: "development\n"
+
+- name: Configure /etc/issue for test group
+  hosts: test
+  become: true
+  tasks:
+    - name: Set /etc/issue for test
+      copy:
+        dest: /etc/issue
+        content: "test\n"

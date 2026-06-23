@@ -1,0 +1,25 @@
+---
+- name: Install common packages on dev and test
+  hosts: dev:test
+  become: true
+  tasks:
+    - name: Install MariaDB package and PHP
+      dnf:
+        name:
+          - mariadb105
+          - php
+        state: present
+
+- name: Update all packages and install Development Tools on dev
+  hosts: dev
+  become: true
+  tasks:
+    - name: Update all packages on dev
+      dnf:
+        name: "*"
+        state: latest
+
+    - name: Install Development Tools group on dev
+      dnf:
+        name: "@Development Tools"
+        state: present

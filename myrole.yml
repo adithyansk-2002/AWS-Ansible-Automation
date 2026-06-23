@@ -1,0 +1,6 @@
+---
+- name: Apply myrole to test group
+  hosts: test
+  become: true
+  roles:
+    - myrole

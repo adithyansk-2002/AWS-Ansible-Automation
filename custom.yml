@@ -1,0 +1,26 @@
+---
+- name: Configure custom web page on dev server
+  hosts: dev
+  become: true
+  tasks:
+    - name: Install Apache
+      dnf:
+        name: httpd
+        state: present
+
+    - name: Start and enable Apache
+      service:
+        name: httpd
+        state: started
+        enabled: true
+
+    - name: Create custom dev homepage
+      copy:
+        dest: /var/www/html/index.html
+        content: |
+          <html>
+          <head><title>Dev Server</title></head>
+          <body>
+          <h1>Welcome my custom dev server</h1>
+          </body>
+          </html>

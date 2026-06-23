@@ -1,0 +1,10 @@
+---
+ansible-navigator:
+  execution-environment:
+    enabled: true
+    image: ghcr.io/ansible/creator-ee:v0.22.0
+    pull:
+      policy: missing
+  ansible:
+    config:
+      path: /home/devops/ansible/ansible.cfg
