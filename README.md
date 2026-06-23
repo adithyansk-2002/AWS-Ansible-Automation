@@ -4,46 +4,150 @@ Ansible-based infrastructure automation for **ITFS Task 1, Mission 1**. This rep
 
 ## Overview
 
-| Component | Host | Group | Purpose |
-|-----------|------|-------|---------|
-| Control node | `mumbai-control` | — | Runs Ansible, Docker, and ansible-navigator |
-| Managed node 1 | `mumbai-client1` | `dev` | Development server (packages, `/etc/issue`, custom web page) |
-| Managed node 2 | `mumbai-client2` | `test` | Test server (packages, `/etc/issue`, role-based web page) |
+### Infrastructure
+
+Three EC2 instances in **AWS Mumbai (`ap-south-1`)**:
+
+| Instance type | Name | Ansible group |
+|---------------|------|---------------|
+| Control node | `mumbai-control` | — |
+| Client node 1 | `mumbai-client1` | `dev` |
+| Client node 2 | `mumbai-client2` | `test` |
+
+**Setup requirements:**
+
+- `devops` user on all machines with SSH key-based authentication
+- Project directory on control node: `/home/devops/ansible`
+- All playbooks executed via **Docker** and **ansible-navigator** only
+
+> **Important:** `ansible-playbook <playbook_name>` is **not permitted** for this mission. Use container-based execution only.
 
 ```mermaid
 flowchart LR
-  subgraph control [Control Node]
-    A[mumbai-control]
+  subgraph control [Control Node — mumbai-control]
+    A[Docker + ansible-navigator]
   end
   subgraph managed [Managed Nodes]
-    B[mumbai-client1<br/>dev]
-    C[mumbai-client2<br/>test]
+    B[mumbai-client1<br/>group: dev]
+    C[mumbai-client2<br/>group: test]
   end
-  A -->|SSH / Ansible| B
-  A -->|SSH / Ansible| C
+  A -->|SSH / Ansible EE| B
+  A -->|SSH / Ansible EE| C
 ```
 
-## Tech Stack
+### Ansible configuration (Task 2)
 
-- **Cloud:** AWS EC2 (Mumbai region)
-- **OS:** Amazon Linux 2023 (`dnf` package manager)
-- **Automation:** Ansible, ansible-navigator
-- **Container runtime:** Docker (on control node)
-- **Web server:** Apache (`httpd`)
-- **Packages:** MariaDB 10.5, PHP, Development Tools (dev only)
+| Deliverable | Path on control node |
+|-------------|----------------------|
+| Inventory | `/home/devops/ansible/inventory` |
+| Ansible config | `/home/devops/ansible/ansible.cfg` |
 
-## Project Structure
+Inventory rules:
+
+- `mumbai-client1` → group `dev`
+- `mumbai-client2` → group `test`
+
+**Verification:** demonstrate connectivity with Ansible (via ansible-navigator).
+
+### Package management (Task 3)
+
+**File:** `packages.yml`
+
+| Target | Packages / actions |
+|--------|-------------------|
+| Groups `dev` and `test` | `mariadb`, `php` |
+| Group `dev` only | RPM Development Tools group |
+| Group `dev` only | Update all packages |
+
+**Verification:** show successful playbook execution and installed packages.
+
+### Role and template (Task 4)
+
+| Deliverable | Path |
+|-------------|------|
+| Role | `/home/devops/ansible/roles/myrole` |
+| Template | `roles/myrole/templates/index.j2` |
+| Playbook | `/home/devops/ansible/myrole.yml` |
+
+**Role requirements:**
+
+- Configure Apache web server
+- Template output: `Welcome to <full hostname of machine> on <IP address>`
+- Run **only** on hosts in group `test`
+
+**Verification:** access the web page via browser or `curl`.
+
+### Login banner (Task 5)
+
+**File:** `issue.yml`
+
+Replace `/etc/issue` content:
+
+| Group | Expected content |
+|-------|------------------|
+| `dev` | `development` |
+| `test` | `test` |
+
+**Verification:** display `/etc/issue` on each host.
+
+### Custom web server (Task 6)
+
+**File:** `custom.yml`
+
+Configure Apache on group `dev`:
+
+| Setting | Value |
+|---------|-------|
+| Document root | `/webdev` |
+| Web page content | `development` |
+| Symbolic link | `/webdev` → `/var/www/html` |
+
+**Verification:** open the web page and confirm content.
+
+### Git integration (Task 7)
+
+Push to this repository:
+
+- `inventory`
+- `ansible.cfg`
+- `packages.yml`
+- `myrole.yml`
+- `issue.yml`
+- `custom.yml`
+- `roles/myrole`
+
+---
+
+## Mission 2 — Infrastructure Recreation Using Git
+
+Mission 2 reuses this repository in a **new AWS Hyderabad region** environment:
+
+| Instance | Name |
+|----------|------|
+| Control node | `hyderabad-control` |
+| Client 1 | `hyderabad-client1` |
+| Client 2 | `hyderabad-client2` |
+
+- User: `clone` (instead of `devops`)
+- Project directory: `/home/clone/ansible`
+- Clone this Git repo, update inventory for the new IPs, and re-run all playbooks with **ansible-navigator**
+
+**Validation:** successful execution of `packages.yml`, `myrole.yml`, `issue.yml`, and `custom.yml`.
+
+---
+
+## Repository Contents
 
 ```
 .
 ├── ansible.cfg              # Ansible defaults (inventory path, remote user)
 ├── ansible-navigator.yml    # Execution environment for ansible-navigator
-├── inventory                # Host groups: dev, test
-├── packages.yml             # Package installation on dev and test
-├── issue.yml                # /etc/issue banner configuration
-├── custom.yml               # Apache + custom homepage on dev
-├── myrole.yml               # Applies myrole to test group
-└── myrole/                  # Role: Apache + test homepage
+├── inventory                # dev / test host groups
+├── packages.yml             # Task 3 — package installation
+├── issue.yml                # Task 5 — /etc/issue banners
+├── custom.yml               # Task 6 — Apache on dev
+├── myrole.yml               # Task 4 — applies myrole to test group
+└── myrole/                  # Task 4 — Apache + web page role
     ├── tasks/main.yml
     ├── defaults/main.yml
     ├── handlers/main.yml
@@ -51,15 +155,23 @@ flowchart LR
     └── tests/
 ```
 
+> On the control node, the role lives under `/home/devops/ansible/`. In this repo it is committed as `myrole/` at the project root (equivalent to `roles/myrole` when placed in the standard roles path).
+
+## Tech Stack
+
+- **Cloud:** AWS EC2 (Mumbai — Mission 1; Hyderabad — Mission 2)
+- **OS:** Amazon Linux 2023 (`dnf`)
+- **Automation:** ansible-navigator (execution environment inside Docker)
+- **Web server:** Apache (`httpd`)
+- **Packages:** MariaDB, PHP, Development Tools (dev only)
+
 ## Prerequisites
 
-Before running playbooks, ensure the following are in place:
-
-1. **Three EC2 instances** in `ap-south-1` running Amazon Linux 2023
-2. **`devops` user** on all nodes with passwordless SSH from the control node to managed nodes
-3. **Ansible** installed on the control node (typically under `/home/devops/ansible/`)
-4. **Python 3** available on managed nodes (`/usr/bin/python3`)
-5. **Docker** and **ansible-navigator** on the control node (optional, for EE-based runs)
+1. Three EC2 instances in the target region (Amazon Linux 2023)
+2. Mission user created on all nodes (`devops` for Mission 1, `clone` for Mission 2) with SSH key access from the control node
+3. **Docker** and **ansible-navigator** on the control node
+4. Project deployed under `/home/devops/ansible/` (Mission 1) or `/home/clone/ansible/` (Mission 2)
+5. Python 3 on managed nodes (`/usr/bin/python3`)
 
 ## Configuration
 
@@ -81,8 +193,6 @@ ansible_python_interpreter=/usr/bin/python3
 
 ### Ansible config
 
-`ansible.cfg` points to the inventory on the control node and sets the remote user:
-
 ```ini
 [defaults]
 inventory = /home/devops/ansible/inventory
@@ -91,99 +201,68 @@ retry_files_enabled = False
 remote_user = devops
 ```
 
-> **Note:** Adjust the `inventory` path in `ansible.cfg` if you clone this repo to a different location on the control node.
+## Running Playbooks
 
-## Playbooks
+All playbooks **must** be executed with ansible-navigator from `/home/devops/ansible/` on the control node.
 
-Run all commands from the control node inside the project directory (e.g. `/home/devops/ansible/`).
+### Execution environment
 
-| Playbook | Target | Description |
-|----------|--------|-------------|
-| `packages.yml` | `dev`, `test` | Installs MariaDB 10.5 and PHP on both groups; updates all packages and installs `@Development Tools` on `dev` only |
-| `issue.yml` | `dev`, `test` | Sets `/etc/issue` to `development` on dev and `test` on test |
-| `custom.yml` | `dev` | Installs Apache, enables the service, and deploys a custom dev homepage |
-| `myrole.yml` | `test` | Applies the `myrole` role (Apache + test homepage) |
-
-### Example usage
-
-```bash
-# Install packages
-ansible-playbook packages.yml
-
-# Configure login banners
-ansible-playbook issue.yml
-
-# Deploy dev web server
-ansible-playbook custom.yml
-
-# Deploy test web server via role
-ansible-playbook myrole.yml
-```
-
-Verify connectivity first:
-
-```bash
-ansible all -m ping
-```
-
-### Recommended execution order
-
-1. `packages.yml` — base packages and dev tooling
-2. `issue.yml` — environment banners
-3. `custom.yml` — dev web server
-4. `myrole.yml` — test web server
-
-## Role: `myrole`
-
-The `myrole` role configures the test server web stack:
-
-1. Installs Apache (`httpd`) via `dnf`
-2. Starts and enables the `httpd` service
-3. Deploys `/var/www/html/index.html` with a test server welcome page
-
-Invoked by `myrole.yml`:
-
-```yaml
-- name: Apply myrole to test group
-  hosts: test
-  become: true
-  roles:
-    - myrole
-```
-
-## ansible-navigator
-
-`ansible-navigator.yml` configures an execution environment using the official Ansible creator image:
+`ansible-navigator.yml`:
 
 ```yaml
 ansible-navigator:
   execution-environment:
     enabled: true
     image: ghcr.io/ansible/creator-ee:v0.22.0
+    pull:
+      policy: missing
+  ansible:
+    config:
+      path: /home/devops/ansible/ansible.cfg
 ```
 
-Run playbooks through the EE (requires Docker):
+### Commands
+
+Verify connectivity:
 
 ```bash
-ansible-navigator run packages.yml
-ansible-navigator run issue.yml
-ansible-navigator run custom.yml
-ansible-navigator run myrole.yml
+ansible-navigator exec -- ansible all -m ping
 ```
 
-## Tasks Completed (Mission 1)
+Run playbooks (recommended order):
 
-1. Created 3 EC2 instances in AWS Mumbai region
-2. Configured passwordless SSH access for the `devops` user
-3. Installed Docker and ansible-navigator on the control node
-4. Configured Ansible inventory and connectivity
-5. Executed package installation playbook
-6. Created and executed role for test server web page
-7. Configured `/etc/issue` on dev and test servers
-8. Created custom web page on dev server
+```bash
+ansible-navigator run packages.yml   # Task 3
+ansible-navigator run issue.yml      # Task 5
+ansible-navigator run custom.yml     # Task 6
+ansible-navigator run myrole.yml     # Task 4
+```
+
+### Verification examples
+
+```bash
+# Task 5 — check /etc/issue
+ansible-navigator exec -- ansible dev -m command -a "cat /etc/issue"
+ansible-navigator exec -- ansible test -m command -a "cat /etc/issue"
+
+# Task 4 — test web page (replace with test host IP)
+curl http://<test-server-ip>/
+
+# Task 6 — dev web page (replace with dev host IP)
+curl http://<dev-server-ip>/
+```
+
+## Playbook Reference
+
+| Playbook | Task | Target | Purpose |
+|----------|------|--------|---------|
+| `packages.yml` | 3 | `dev`, `test` | MariaDB, PHP; dev package updates and Development Tools |
+| `issue.yml` | 5 | `dev`, `test` | Set `/etc/issue` banners |
+| `custom.yml` | 6 | `dev` | Apache web server with custom document root |
+| `myrole.yml` | 4 | `test` | Apache web server via `myrole` and Jinja2 template |
 
 ## Notes
 
-- All package management uses `dnf` (Amazon Linux 2023).
-- `host_key_checking` is disabled in `ansible.cfg` for lab convenience; enable it in production.
-- Replace placeholder or stale IPs in `inventory` before use; committed IPs may not match your current instances.
+- Package management uses `dnf` on Amazon Linux 2023 (MariaDB package may appear as `mariadb105` in the playbook).
+- `host_key_checking` is disabled in `ansible.cfg` for lab use; enable it in production.
+- Replace IPs in `inventory` before running against live instances.
