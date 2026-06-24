@@ -11,7 +11,7 @@
     - name: Create web page with development content
       copy:
         dest: /var/www/html/index.html
-        content: "development\n"
+        content: "<h1>development\n<h1>"
 
     - name: Create symbolic link /webdev to /var/www/html
       file:

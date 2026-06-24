@@ -1,8 +1,8 @@
 [dev]
-mumbai-client1 ansible_host=52.66.203.197
+mumbai-client1 ansible_host=3.108.62.44
 
 [test]
-mumbai-client2 ansible_host=13.127.215.162
+mumbai-client2 ansible_host=13.206.195.223
 
 [all:vars]
 ansible_user=devops
