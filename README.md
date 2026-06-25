@@ -301,23 +301,23 @@ ansible-navigator exec -- ansible all -m ping
 Run playbooks (recommended order):
 
 ```bash
-ansible-navigator run packages.yml   # Task 3
-ansible-navigator run issue.yml      # Task 5
-ansible-navigator run custom.yml     # Task 6
-ansible-navigator run myrole.yml     # Task 4
+ansible-navigator run packages.yml
+ansible-navigator run issue.yml
+ansible-navigator run custom.yml
+ansible-navigator run myrole.yml
 ```
 
 ### Verification examples
 
 ```bash
-# Task 5 — check /etc/issue
+ansible-navigator exec -- ansible dev -m command -a "cat /etc/issue"
 ansible-navigator exec -- ansible dev -m command -a "cat /etc/issue"
 ansible-navigator exec -- ansible test -m command -a "cat /etc/issue"
 
-# Task 4 — test web page (replace with test host IP)
+# Test web page (replace with test host IP)
 curl http://<test-server-ip>/
 
-# Task 6 — dev web page (replace with dev host IP)
+# Dev web page (replace with dev host IP)
 curl http://<dev-server-ip>/
 ```
 
