@@ -44,6 +44,10 @@ Three EC2 instances in **AWS Mumbai (`ap-south-1`)**:
 - Project directory on control node: `/home/devops/ansible`
 - All playbooks executed via **Docker** and **ansible-navigator** only
 
+![Mumbai EC2 instances running in ap-south-1](docs/screenshots/mumbai-ec2-instances.jpg)
+
+*Figure 1 — Three EC2 instances in AWS Mumbai (`mumbai-control`, `mumbai-client1`, `mumbai-client2`).*
+
 ```mermaid
 flowchart LR
   subgraph control [Control Node — mumbai-control]
@@ -71,6 +75,10 @@ Inventory rules:
 
 **Verification:** demonstrate connectivity with Ansible (via ansible-navigator).
 
+![Ansible ping — both Mumbai clients reachable](docs/screenshots/mumbai-ansible-ping.jpg)
+
+*Figure 2 — `ansible all -m ping` returns `pong` for `mumbai-client1` and `mumbai-client2`.*
+
 ### Package management
 
 **File:** `packages.yml`
@@ -82,6 +90,10 @@ Inventory rules:
 | Group `dev` only | Update all packages |
 
 **Verification:** show successful playbook execution and installed packages.
+
+![packages.yml executed via ansible-navigator](docs/screenshots/mumbai-packages-run.jpg)
+
+*Figure 3 — MariaDB, PHP, and Development Tools installed successfully.*
 
 ### Role and template
 
@@ -102,6 +114,10 @@ Welcome to {{ ansible_fqdn | default(ansible_hostname) }} on {{ ansible_default_
 
 **Verification:** access the web page via browser or `curl`.
 
+![Test server web page — hostname and IP from template](docs/screenshots/mumbai-test-webpage.jpg)
+
+*Figure 4 — `myrole` output on `mumbai-client2`: Welcome to hostname on IP.*
+
 ### Login banner
 
 **File:** `issue.yml`
@@ -114,6 +130,10 @@ Replace `/etc/issue` content:
 | `test` | `test` |
 
 **Verification:** display `/etc/issue` on each host.
+
+![issue.yml execution and /etc/issue verification](docs/screenshots/mumbai-issue-verify.jpg)
+
+*Figure 5 — `/etc/issue` shows `development` on dev and `test` on test.*
 
 ### Custom web server 
 
@@ -129,6 +149,10 @@ Configure Apache on group `dev`:
 
 **Verification:** open the web page and confirm content.
 
+![Dev server web page — development](docs/screenshots/mumbai-dev-webpage.jpg)
+
+*Figure 6 — `custom.yml` serves `development` from the dev host.*
+
 ### Git integration
 
 Push to this repository:
@@ -140,6 +164,10 @@ Push to this repository:
 - `issue.yml`
 - `custom.yml`
 - `roles/myrole`
+
+![GitHub repository with all project files](docs/screenshots/github-repository.jpg)
+
+*Figure 7 — Project pushed to [GitHub](https://github.com/adithyansk-2002/AWS-Ansible-Automation).*
 
 ---
 
@@ -158,6 +186,26 @@ We now recreate the infrastructure in a **new AWS Hyderabad region** environment
 - Clone this Git repo, update inventory for the new IPs, and re-run all playbooks with **ansible-navigator**
 
 **Validation:** successful execution of `packages.yml`, `myrole.yml`, `issue.yml`, and `custom.yml`.
+
+![Hyderabad EC2 instances running in ap-south-2](docs/screenshots/hyderabad-ec2-instances.jpg)
+
+*Figure 8 — Three EC2 instances in AWS Hyderabad.*
+
+![Clone GitHub repo to /home/clone/ansible](docs/screenshots/hyderabad-git-clone.jpg)
+
+*Figure 9 — Mission 1 repository cloned on `hyderabad-control`.*
+
+![Ansible ping — both Hyderabad clients reachable](docs/screenshots/hyderabad-ansible-ping.jpg)
+
+*Figure 10 — Connectivity verified after updating inventory for Hyderabad.*
+
+![Hyderabad test web page](docs/screenshots/hyderabad-test-webpage.jpg)
+
+*Figure 11 — Test host web page (role + template).*
+
+![Hyderabad dev web page](docs/screenshots/hyderabad-dev-webpage.jpg)
+
+*Figure 12 — Dev host web page (`development`).*
 
 ---
 
